@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <!-- RWD：viewport-fit=cover 讓內容可延伸到瀏覽器圓角／瀏海區（搭配 safe-area） -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Le Grand Palais | 頂級奢華渡假飯店</title>
+    <meta name="description" content="Le Grand Palais Resort & Spa — 個人專屬管家、無邊際天際泳池與米其林星級餐飲，線上即可預訂尊榮客房。">
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BY7N760W0D"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-BY7N760W0D');
+    </script>
+
+    <!-- ===== PWA ===== -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0c0e">
+    <meta name="color-scheme" content="dark">
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- iOS / Safari -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Grand Palais">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+    <!-- Favicon -->
+    <link rel="icon" href="icons/favicon.ico" sizes="any">
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+
+    <!-- 預先連線，加速第三方資源 -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        gold: {
+                            300: '#f3e5ab',
+                            400: '#d4af37',
+                            500: '#c5a059',
+                            600: '#aa823d',
+                        },
+                        dark: {
+                            950: '#0b0c0e',
+                            900: '#121418',
+                            800: '#1c1f26',
+                            700: '#2b303c',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', '"Noto Serif TC"', 'Georgia', 'serif'],
+                        sans: ['"Inter"', '"Noto Sans TC"', '"PingFang TC"', '"Microsoft JhengHei"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --nav-h: 5rem;                              /* 導覽列高度 */
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+        }
+        html {
+            /* 錨點捲動時避開固定導覽列 */
+            scroll-padding-top: calc(var(--nav-h) + var(--safe-top));
+            -webkit-text-size-adjust: 100%;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans TC', 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: #121418;
+            color: #e5e7eb;
+            overflow-x: hidden;
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+        h1, h2, h3, h4, .font-serif {
+            font-family: 'Playfair Display', 'Noto Serif TC', serif;
+        }
+        img { max-width: 100%; height: auto; }
+
+        /* 導覽列：支援瀏海／狀態列 */
+        #navbar { padding-top: var(--safe-top); }
+
+        /* Hero：手機載入小圖、桌機載入大圖；使用 svh 避免行動瀏覽器網址列造成跳動 */
+        .hero-bg {
+            background-image: linear-gradient(to bottom, rgba(11, 12, 14, 0.55), rgba(18, 20, 24, 0.85)),
+                              url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=75&w=900');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            min-height: 100svh;
+            padding-top: calc(var(--nav-h) + var(--safe-top));
+        }
+        @media (min-width: 768px) {
+            .hero-bg {
+                background-image: linear-gradient(to bottom, rgba(11, 12, 14, 0.55), rgba(18, 20, 24, 0.85)),
+                                  url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=1920');
+            }
+        }
+        @media (min-width: 1024px) and (hover: hover) {
+            .hero-bg { background-attachment: fixed; }
+        }
+
+        /* 表單：16px 以上避免 iOS 聚焦時自動放大；加大觸控範圍 */
+        input, select, textarea { font-size: 16px; min-height: 48px; }
+        textarea { min-height: 96px; }
+        input[type="date"] { -webkit-appearance: none; appearance: none; color-scheme: dark; }
+        select { color-scheme: dark; }
+
+        /* 觸控裝置：確保可點擊區域至少 44px */
+        @media (pointer: coarse) {
+            #mobile-menu a, .touch-target { min-height: 44px; display: flex; align-items: center; }
+        }
+
+        /* 頁尾避開 iOS Home Indicator */
+        footer { padding-bottom: calc(2rem + var(--safe-bottom)); }
+
+        /* Toast 提示 */
+        #toast-wrap {
+            position: fixed; left: 0; right: 0;
+            bottom: calc(1rem + var(--safe-bottom));
+            display: flex; flex-direction: column; align-items: center; gap: .5rem;
+            padding: 0 1rem; z-index: 70; pointer-events: none;
+        }
+        .toast { pointer-events: auto; animation: toast-in .25s ease-out both; }
+        @keyframes toast-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+        /* 已安裝 (standalone) 時微調 */
+        @media (display-mode: standalone) {
+            .hide-in-app { display: none !important; }
+        }
+
+        /* 尊重「減少動態效果」設定 */
+        @media (prefers-reduced-motion: reduce) {
+            html { scroll-behavior: auto !important; }
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100 antialiased selection:bg-gold-500 selection:text-dark-950">
+
+    <!-- 頂部導覽列 -->
+    <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-dark-950/80 backdrop-blur-md border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- 飯店 LOGO -->
+            <a href="#" class="flex items-center gap-2 sm:gap-3 min-w-0" aria-label="Le Grand Palais 首頁">
+                <i class="fa-solid fa-crown text-gold-400 text-2xl sm:text-3xl"></i>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-base min-[400px]:text-xl sm:text-2xl font-serif font-bold tracking-widest text-gold-400 leading-none whitespace-nowrap">LE GRAND PALAIS</span>
+                    <span class="text-[9px] uppercase tracking-[0.3em] text-gray-400 pt-1">Resort &amp; Spa</span>
+                </div>
+            </a>
+
+            <!-- 桌面導覽連結 -->
+            <nav class="hidden md:flex items-center space-x-5 lg:space-x-8 text-xs uppercase tracking-widest font-medium" aria-label="主選單">
+                <a href="#about" class="hover:text-gold-400 transition-colors">關於飯店</a>
+                <a href="#rooms" class="hover:text-gold-400 transition-colors">尊榮客房</a>
+                <a href="#amenities" class="hover:text-gold-400 transition-colors">頂級設施</a>
+                <a href="#dining" class="hover:text-gold-400 transition-colors">奢華餐飲</a>
+                <a href="#booking" class="hover:text-gold-400 transition-colors">線上預約</a>
+                <a href="#contact" class="hover:text-gold-400 transition-colors">聯絡我們</a>
+            </nav>
+
+            <!-- 右側預約按鈕 -->
+            <div class="hidden md:block">
+                <a href="#booking" class="px-5 lg:px-6 py-2.5 bg-gradient-to-r from-gold-500 to-gold-600 text-dark-950 font-semibold uppercase tracking-wider text-xs rounded-full hover:opacity-90 transition shadow-lg shadow-gold-500/20 whitespace-nowrap">
+                    立即訂房
+                </a>
+            </div>
+
+            <!-- 手機版選單按鈕 -->
+            <button id="menu-btn" type="button" class="md:hidden text-gold-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-gold-400 rounded p-2 -mr-2 w-11 h-11 flex items-center justify-center"
+                    aria-label="開啟選單" aria-expanded="false" aria-controls="mobile-menu">
+                <i id="menu-icon" class="fa-solid fa-bars text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- 手機版選單下拉區塊 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-dark-900 border-b border-white/10 px-6 pt-3 pb-6 space-y-1 max-h-[calc(100vh-5rem)] overflow-y-auto">
+            <a href="#about" class="block py-2 text-sm uppercase tracking-wider hover:text-gold-400">關於飯店</a>
+            <a href="#rooms" class="block py-2 text-sm uppercase tracking-wider hover:text-gold-400">尊榮客房</a>
+            <a href="#amenities" class="block py-2 text-sm uppercase tracking-wider hover:text-gold-400">頂級設施</a>
+            <a href="#dining" class="block py-2 text-sm uppercase tracking-wider hover:text-gold-400">奢華餐飲</a>
+            <a href="#booking" class="block py-2 text-sm uppercase tracking-wider hover:text-gold-400">線上預約</a>
+            <a href="#contact" class="block py-2 text-sm uppercase tracking-wider hover:text-gold-400">聯絡我們</a>
+            <div class="pt-3">
+                <a href="#booking" class="flex items-center justify-center text-center w-full py-3 bg-gold-500 text-dark-950 font-bold uppercase tracking-wider text-xs rounded-full">
+                    立即訂房
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+    <!-- 主視覺 Hero Section -->
+    <section class="hero-bg flex items-center justify-center text-center px-4 pb-20 relative">
+        <div class="max-w-4xl mx-auto space-y-5 sm:space-y-6 z-10">
+            <div class="inline-flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 rounded-full border border-gold-400/30 bg-dark-950/50 backdrop-blur-sm text-gold-400 text-[10px] sm:text-xs uppercase tracking-widest">
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <i class="fa-solid fa-star"></i>
+                <span class="ml-1 sm:ml-2 font-sans font-medium text-gray-200">5-Star Luxury Destination</span>
+            </div>
+            <h1 class="text-3xl min-[400px]:text-4xl sm:text-6xl lg:text-7xl font-serif font-bold tracking-wide text-white leading-tight drop-shadow-2xl">
+                靜謐優雅的頂級奢華體驗
+            </h1>
+            <p class="text-gray-300 text-sm sm:text-lg max-w-2xl mx-auto font-light leading-relaxed drop-shadow">
+                座落於海天一色的極致奢華勝地，為您提供個人專屬管家服務、無邊際天際泳池與 Michelin 星級極致佳餚。
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
+                <a href="#booking" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-dark-950 font-bold uppercase tracking-widest text-xs rounded-full hover:opacity-90 transition shadow-xl shadow-gold-500/20">
+                    探索專屬尊榮預訂
+                </a>
+                <a href="#rooms" class="w-full sm:w-auto px-8 py-4 border border-gold-400/60 text-gold-400 font-bold uppercase tracking-widest text-xs rounded-full hover:bg-gold-400/10 transition backdrop-blur-sm">
+                    瀏覽客房與套房
+                </a>
+            </div>
+        </div>
+
+        <!-- 裝飾性滾動提示 -->
+        <a href="#about" aria-label="向下捲動" class="absolute bottom-6 sm:bottom-8 left-1/2 -translate-x-1/2 text-gold-400/70 hover:text-gold-400 transition animate-bounce">
+            <i class="fa-solid fa-chevron-down text-2xl"></i>
+        </a>
+    </section>
+
+    <!-- 關於飯店 Section -->
+    <section id="about" class="py-16 sm:py-24 bg-dark-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+                <div class="space-y-6">
+                    <span class="text-gold-400 uppercase tracking-[0.25em] text-xs font-semibold">The Luxury Experience</span>
+                    <h2 class="text-2xl min-[400px]:text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white leading-snug">
+                        獨一無二的非凡雅緻<br>重塑奢華度假標準
+                    </h2>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        Le Grand Palais Resort &amp; Spa 融合經典巴洛克建築的美學線條與現代極簡風尚。每一處細節皆精心打造，旨在為造訪的全球頂級貴賓提供寧靜、隱密且無與倫比的旅宿享受。
+                    </p>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        從您踏入大廳的瞬間開始，24小時專屬私人管家團隊即全心佇候，根據您的偏好規劃專屬行程，讓每一次入住都成為值得終生典藏的尊榮記憶。
+                    </p>
+                    <div class="grid grid-cols-3 gap-3 sm:gap-6 pt-6 border-t border-white/10">
+                        <div>
+                            <span class="block text-2xl sm:text-3xl font-serif font-bold text-gold-400">120</span>
+                            <span class="text-[11px] sm:text-xs text-gray-400 uppercase tracking-wider">奢華全景套房</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl sm:text-3xl font-serif font-bold text-gold-400">24/7</span>
+                            <span class="text-[11px] sm:text-xs text-gray-400 uppercase tracking-wider">尊榮私人管家</span>
+                        </div>
+                        <div>
+                            <span class="block text-2xl sm:text-3xl font-serif font-bold text-gold-400">3 間</span>
+                            <span class="text-[11px] sm:text-xs text-gray-400 uppercase tracking-wider">米其林星級餐廳</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative group">
+                    <div class="absolute -inset-2 sm:-inset-4 bg-gold-500/10 rounded-2xl filter blur-xl group-hover:bg-gold-500/20 transition duration-500"></div>
+                    <div class="relative rounded-xl overflow-hidden shadow-2xl border border-white/10 aspect-[4/3] bg-dark-700">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=75&w=1000"
+                             srcset="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=75&w=500 500w,
+                                     https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=75&w=800 800w,
+                                     https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=75&w=1200 1200w"
+                             sizes="(min-width: 1024px) 50vw, 100vw"
+                             width="1000" height="750" loading="lazy" decoding="async"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="Hotel Interior Architecture">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 尊榮客房 Room Section -->
+    <section id="rooms" class="py-16 sm:py-24 bg-dark-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-4 mb-10 sm:mb-16">
+                <span class="text-gold-400 uppercase tracking-[0.25em] text-xs font-semibold">Accommodations</span>
+                <h2 class="text-3xl sm:text-5xl font-serif font-bold text-white">典雅尊榮房型</h2>
+                <div class="w-16 h-0.5 bg-gold-500 mx-auto"></div>
+                <p class="text-gray-400 text-sm max-w-xl mx-auto">寬敞舒適的私密空間，配備全景落地窗與頂級奢華名品傢俱</p>
+            </div>
+
+            <!-- 客房 Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <!-- 房型 1 -->
+                <article class="bg-dark-800 rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/40 transition duration-300 flex flex-col justify-between group">
+                    <div class="h-56 sm:h-64 overflow-hidden bg-dark-700 relative">
+                        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=75&w=800"
+                             srcset="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=75&w=480 480w,
+                                     https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=75&w=800 800w,
+                                     https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=75&w=1100 1100w"
+                             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                             width="800" height="512" loading="lazy" decoding="async"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Deluxe Ocean Suite">
+                        <span class="absolute top-4 right-4 bg-dark-950/80 backdrop-blur-md text-gold-400 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                            海景首選
+                        </span>
+                    </div>
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-white group-hover:text-gold-400 transition-colors">海景豪華尊榮套房</h3>
+                            <p class="text-gray-400 text-sm font-light mt-2 leading-relaxed">
+                                擁抱 180 度壯闊無敵海景，設有獨立陽台、義大利手工大理石浴室與 King Size 奢華名床。
+                            </p>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-400 mt-4 border-t border-white/5 pt-3">
+                                <span><i class="fa-solid fa-vector-square text-gold-400 mr-1.5"></i> 65 m²</span>
+                                <span><i class="fa-solid fa-user-group text-gold-400 mr-1.5"></i> 2 位貴賓</span>
+                                <span><i class="fa-solid fa-bed text-gold-400 mr-1.5"></i> 特大雙人床</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
+                            <div>
+                                <span class="text-xs text-gray-400">每晚起</span>
+                                <div class="text-xl font-serif font-bold text-gold-400">NT$ 18,800</div>
+                            </div>
+                            <a href="#booking" data-room="海景豪華尊榮套房" class="book-room touch-target justify-center px-5 py-2 border border-gold-500/60 text-gold-400 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-gold-500 hover:text-dark-950 transition whitespace-nowrap">
+                                預訂房型
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 房型 2 -->
+                <article class="bg-dark-800 rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/40 transition duration-300 flex flex-col justify-between group">
+                    <div class="h-56 sm:h-64 overflow-hidden bg-dark-700 relative">
+                        <img src="https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&q=75&w=800"
+                             srcset="https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&q=75&w=480 480w,
+                                     https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&q=75&w=800 800w,
+                                     https://images.unsplash.com/photo-1591088398332-8a7791972843?auto=format&fit=crop&q=75&w=1100 1100w"
+                             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                             width="800" height="512" loading="lazy" decoding="async"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Presidential Villa">
+                        <span class="absolute top-4 right-4 bg-dark-950/80 backdrop-blur-md text-gold-400 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                            旗艦Villa
+                        </span>
+                    </div>
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-white group-hover:text-gold-400 transition-colors">總統專屬獨立泳池別墅</h3>
+                            <p class="text-gray-400 text-sm font-light mt-2 leading-relaxed">
+                                獨棟私密 Villa，配備專屬私人無邊際泳池、私人花園庭院與全天候專屬管家禮遇。
+                            </p>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-400 mt-4 border-t border-white/5 pt-3">
+                                <span><i class="fa-solid fa-vector-square text-gold-400 mr-1.5"></i> 180 m²</span>
+                                <span><i class="fa-solid fa-user-group text-gold-400 mr-1.5"></i> 4 位貴賓</span>
+                                <span><i class="fa-solid fa-swimming-pool text-gold-400 mr-1.5"></i> 私人溫水池</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
+                            <div>
+                                <span class="text-xs text-gray-400">每晚起</span>
+                                <div class="text-xl font-serif font-bold text-gold-400">NT$ 48,000</div>
+                            </div>
+                            <a href="#booking" data-room="總統專屬獨立泳池別墅" class="book-room touch-target justify-center px-5 py-2 border border-gold-500/60 text-gold-400 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-gold-500 hover:text-dark-950 transition whitespace-nowrap">
+                                預訂房型
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- 房型 3 -->
+                <article class="bg-dark-800 rounded-xl overflow-hidden border border-white/5 hover:border-gold-500/40 transition duration-300 flex flex-col justify-between group md:col-span-2 lg:col-span-1">
+                    <div class="h-56 sm:h-64 overflow-hidden bg-dark-700 relative">
+                        <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=75&w=800"
+                             srcset="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=75&w=480 480w,
+                                     https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=75&w=800 800w,
+                                     https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=75&w=1100 1100w"
+                             sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                             width="800" height="512" loading="lazy" decoding="async"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-500" alt="Executive Panorama Suite">
+                    </div>
+                    <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h3 class="text-xl font-serif font-bold text-white group-hover:text-gold-400 transition-colors">行政頂樓景觀套房</h3>
+                            <p class="text-gray-400 text-sm font-light mt-2 leading-relaxed">
+                                位於飯店最高樓層，具備雙面全景落地窗，享行政酒廊免費全天候精緻餐點與雞尾酒服務。
+                            </p>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-400 mt-4 border-t border-white/5 pt-3">
+                                <span><i class="fa-solid fa-vector-square text-gold-400 mr-1.5"></i> 90 m²</span>
+                                <span><i class="fa-solid fa-user-group text-gold-400 mr-1.5"></i> 2 位貴賓</span>
+                                <span><i class="fa-solid fa-martini-glass text-gold-400 mr-1.5"></i> 附行政酒廊</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
+                            <div>
+                                <span class="text-xs text-gray-400">每晚起</span>
+                                <div class="text-xl font-serif font-bold text-gold-400">NT$ 26,500</div>
+                            </div>
+                            <a href="#booking" data-room="行政頂樓景觀套房" class="book-room touch-target justify-center px-5 py-2 border border-gold-500/60 text-gold-400 text-xs font-bold uppercase tracking-wider rounded-full hover:bg-gold-500 hover:text-dark-950 transition whitespace-nowrap">
+                                預訂房型
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頂級設施 Section -->
+    <section id="amenities" class="py-16 sm:py-24 bg-dark-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-4 mb-10 sm:mb-16">
+                <span class="text-gold-400 uppercase tracking-[0.25em] text-xs font-semibold">Resort Amenities</span>
+                <h2 class="text-3xl sm:text-5xl font-serif font-bold text-white">頂級休閒設施</h2>
+                <div class="w-16 h-0.5 bg-gold-500 mx-auto"></div>
+            </div>
+
+            <div class="grid grid-cols-1 min-[520px]:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <!-- 設施 1 -->
+                <div class="bg-dark-900 p-6 sm:p-8 rounded-xl border border-white/5 hover:border-gold-500/30 transition text-center space-y-4 group">
+                    <div class="w-16 h-16 bg-gold-500/10 text-gold-400 rounded-full flex items-center justify-center mx-auto text-2xl group-hover:bg-gold-500 group-hover:text-dark-950 transition duration-300">
+                        <i class="fa-solid fa-water-ladder"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-serif font-bold text-white">天際無邊際泳池</h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">
+                        與天際線無縫相連的無邊際高空泳池，俯瞰絢麗日落景色。
+                    </p>
+                </div>
+
+                <!-- 設施 2 -->
+                <div class="bg-dark-900 p-6 sm:p-8 rounded-xl border border-white/5 hover:border-gold-500/30 transition text-center space-y-4 group">
+                    <div class="w-16 h-16 bg-gold-500/10 text-gold-400 rounded-full flex items-center justify-center mx-auto text-2xl group-hover:bg-gold-500 group-hover:text-dark-950 transition duration-300">
+                        <i class="fa-solid fa-spa"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-serif font-bold text-white">芳療水療中心</h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">
+                        結合古法與現代技術，由頂級芳療師為您打造深層身心放鬆。
+                    </p>
+                </div>
+
+                <!-- 設施 3 -->
+                <div class="bg-dark-900 p-6 sm:p-8 rounded-xl border border-white/5 hover:border-gold-500/30 transition text-center space-y-4 group">
+                    <div class="w-16 h-16 bg-gold-500/10 text-gold-400 rounded-full flex items-center justify-center mx-auto text-2xl group-hover:bg-gold-500 group-hover:text-dark-950 transition duration-300">
+                        <i class="fa-solid fa-utensils"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-serif font-bold text-white">星級米其林美饌</h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">
+                        匯聚國際名廚，精選全球優質食材，演繹視覺與味覺的藝術宴席。
+                    </p>
+                </div>
+
+                <!-- 設施 4 -->
+                <div class="bg-dark-900 p-6 sm:p-8 rounded-xl border border-white/5 hover:border-gold-500/30 transition text-center space-y-4 group">
+                    <div class="w-16 h-16 bg-gold-500/10 text-gold-400 rounded-full flex items-center justify-center mx-auto text-2xl group-hover:bg-gold-500 group-hover:text-dark-950 transition duration-300">
+                        <i class="fa-solid fa-concierge-bell"></i>
+                    </div>
+                    <h3 class="text-lg sm:text-xl font-serif font-bold text-white">24h 私人管家</h3>
+                    <p class="text-gray-400 text-xs font-light leading-relaxed">
+                        專業且細緻無微不至的管家服務，全天候滿足您的個人化需求。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 奢華餐飲 Dining Section -->
+    <section id="dining" class="py-16 sm:py-24 bg-dark-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+                <div class="relative group order-2 lg:order-1">
+                    <div class="absolute -inset-2 sm:-inset-4 bg-gold-500/10 rounded-2xl filter blur-xl group-hover:bg-gold-500/20 transition duration-500"></div>
+                    <div class="relative rounded-xl overflow-hidden shadow-2xl border border-white/10 aspect-[4/3] bg-dark-700">
+                        <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=75&w=1000"
+                             srcset="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=75&w=500 500w,
+                                     https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=75&w=800 800w,
+                                     https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&q=75&w=1200 1200w"
+                             sizes="(min-width: 1024px) 50vw, 100vw"
+                             width="1000" height="750" loading="lazy" decoding="async"
+                             class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="Fine Dining Experience">
+                    </div>
+                </div>
+                <div class="space-y-6 order-1 lg:order-2">
+                    <span class="text-gold-400 uppercase tracking-[0.25em] text-xs font-semibold">Fine Dining</span>
+                    <h2 class="text-2xl min-[400px]:text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white leading-snug">
+                        味蕾上的頂級藝術響宴
+                    </h2>
+                    <p class="text-gray-400 font-light leading-relaxed">
+                        飯店內擁有三間風格迥異的頂級餐廳及空中酒吧。由米其林星級主廚執掌，嚴選每日產地直送的珍稀食材，佐以頂級酒莊侍酒師推薦的典藏佳釀。
+                    </p>
+                    <ul class="space-y-3 text-sm text-gray-300 font-light">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-gold-400 mt-1"></i>
+                            <span>L'Étoile 法式頂級精緻料理 (米其林二星)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-gold-400 mt-1"></i>
+                            <span>Sakura 懷石極致日式料理</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-check text-gold-400 mt-1"></i>
+                            <span>Aura 天際露天酒吧與高空爵士音樂夜</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 線上預約/訂房 Section -->
+    <section id="booking" class="py-16 sm:py-24 bg-dark-800 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center space-y-4 mb-10 sm:mb-16">
+                <span class="text-gold-400 uppercase tracking-[0.25em] text-xs font-semibold">Reservation</span>
+                <h2 class="text-3xl sm:text-5xl font-serif font-bold text-white">尊榮線上預訂</h2>
+                <div class="w-16 h-0.5 bg-gold-500 mx-auto"></div>
+                <p class="text-gray-400 text-sm max-w-lg mx-auto">
+                    請填寫您的預計入住資訊，飯店禮賓團隊將於 2 小時內主動與您聯繫確認。
+                </p>
+            </div>
+
+            <form id="booking-form" class="bg-dark-900 p-5 min-[400px]:p-6 sm:p-12 rounded-2xl border border-white/10 shadow-2xl space-y-6" novalidate>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label for="guest-name" class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-medium">貴賓姓名</label>
+                        <input type="text" id="guest-name" name="name" required autocomplete="name" class="w-full bg-dark-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500 transition" placeholder="王小明先生 / Ms. Chen">
+                    </div>
+                    <div>
+                        <label for="guest-phone" class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-medium">聯絡電話</label>
+                        <input type="tel" id="guest-phone" name="phone" required autocomplete="tel" inputmode="tel" class="w-full bg-dark-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500 transition" placeholder="0912-345-678">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div>
+                        <label for="checkin-date" class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-medium">入住日期</label>
+                        <input type="date" id="checkin-date" name="checkin" required class="w-full bg-dark-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500 transition">
+                    </div>
+                    <div>
+                        <label for="checkout-date" class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-medium">退房日期</label>
+                        <input type="date" id="checkout-date" name="checkout" required class="w-full bg-dark-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500 transition">
+                    </div>
+                    <div>
+                        <label for="room-type" class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-medium">選擇房型</label>
+                        <select id="room-type" name="room" required class="w-full bg-dark-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500 transition">
+                            <option value="">請選擇偏好房型</option>
+                            <option value="海景豪華尊榮套房">海景豪華尊榮套房</option>
+                            <option value="總統專屬獨立泳池別墅">總統專屬獨立泳池別墅</option>
+                            <option value="行政頂樓景觀套房">行政頂樓景觀套房</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="special-requests" class="block text-xs uppercase tracking-widest text-gray-400 mb-2 font-medium">個人化特別需求 (可選)</label>
+                    <textarea id="special-requests" name="requests" rows="3" class="w-full bg-dark-800 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500 transition" placeholder="例如：機場接送服務、週年慶慶祝佈置、飲食過敏提醒..."></textarea>
+                </div>
+
+                <p id="form-error" class="hidden text-sm text-red-400 text-center" role="alert"></p>
+
+                <div class="text-center pt-4">
+                    <button type="submit" class="w-full sm:w-auto px-12 py-4 bg-gradient-to-r from-gold-500 to-gold-600 text-dark-950 font-bold uppercase tracking-widest text-xs rounded-full hover:opacity-90 transition shadow-lg shadow-gold-500/20">
+                        送出尊榮預訂
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+    </main>
+
+    <!-- 預訂成功 Modal -->
+    <div id="success-modal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-md px-4 py-6 overflow-y-auto" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="bg-dark-800 border border-gold-500/40 max-w-md w-full p-6 sm:p-8 rounded-2xl text-center space-y-6 shadow-2xl my-auto">
+            <div class="w-16 h-16 bg-gold-500/20 text-gold-400 rounded-full flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3 id="modal-title" class="text-2xl font-serif font-bold text-white">預約申請已收悉</h3>
+            <p id="modal-msg" class="text-gray-300 text-sm font-light leading-relaxed">
+                感謝您的預訂，專屬禮賓團隊將於近期與您電話確認保留細節。
+            </p>
+            <button id="modal-close" type="button" class="w-full py-3 bg-gold-500 text-dark-950 font-bold uppercase tracking-wider text-xs rounded-full hover:bg-gold-400 transition">
+                關閉視窗
+            </button>
+        </div>
+    </div>
+
+    <!-- PWA 提示 (安裝 / 更新 / 離線) -->
+    <div id="toast-wrap" aria-live="polite"></div>
+
+    <!-- 頁尾 Section -->
+    <footer id="contact" class="bg-dark-950 border-t border-white/10 pt-12 sm:pt-16 text-gray-400 text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+            <div class="space-y-4">
+                <div class="flex items-center gap-2 text-gold-400">
+                    <i class="fa-solid fa-crown text-xl"></i>
+                    <span class="text-xl font-serif font-bold tracking-widest">LE GRAND PALAIS</span>
+                </div>
+                <p class="text-xs text-gray-400 font-light leading-relaxed">
+                    極致奢華體驗，極致品質追求。讓每一刻渡假歲月都成為值得典藏的記憶。
+                </p>
+                <div class="flex space-x-4 pt-2">
+                    <a href="#" aria-label="Facebook" class="w-11 h-11 rounded-full bg-dark-800 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-dark-950 transition"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram" class="w-11 h-11 rounded-full bg-dark-800 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-dark-950 transition"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="LINE" class="w-11 h-11 rounded-full bg-dark-800 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-dark-950 transition"><i class="fa-brands fa-line"></i></a>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <h4 class="text-white font-serif uppercase tracking-widest text-xs font-semibold">禮賓服務處</h4>
+                <p class="text-xs text-gray-400"><i class="fa-solid fa-clock text-gold-400 mr-2"></i> 服務時間：全天候 24 小時服務</p>
+                <p class="text-xs text-gray-400"><i class="fa-solid fa-phone text-gold-400 mr-2"></i> 貴賓專線：<a href="tel:+886288889999" class="hover:text-gold-400">+886 (02) 8888-9999</a></p>
+                <p class="text-xs text-gray-400 break-all"><i class="fa-solid fa-envelope text-gold-400 mr-2"></i> 電子信箱：<a href="mailto:concierge@legrandpalais.com" class="hover:text-gold-400">concierge@legrandpalais.com</a></p>
+            </div>
+            <div class="space-y-3">
+                <h4 class="text-white font-serif uppercase tracking-widest text-xs font-semibold">飯店位置</h4>
+                <p class="text-xs text-gray-400"><i class="fa-solid fa-location-dot text-gold-400 mr-2"></i> 台北市信義區仁愛路四段 888 號</p>
+                <p class="text-xs text-gray-400">專屬直升機停機坪及直達禮賓車接送服務</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 sm:mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-500">
+            &copy; 2026 Le Grand Palais Resort &amp; Spa. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- JavaScript 互動邏輯 -->
+    <script>
+    (function () {
+        'use strict';
+        var $ = function (id) { return document.getElementById(id); };
+
+        /* ---------- 手機版選單 ---------- */
+        var menuBtn = $('menu-btn');
+        var mobileMenu = $('mobile-menu');
+        var menuIcon = $('menu-icon');
+
+        function setMenu(open) {
+            mobileMenu.classList.toggle('hidden', !open);
+            menuBtn.setAttribute('aria-expanded', String(open));
+            menuBtn.setAttribute('aria-label', open ? '關閉選單' : '開啟選單');
+            menuIcon.className = open ? 'fa-solid fa-xmark text-2xl' : 'fa-solid fa-bars text-2xl';
+        }
+        menuBtn.addEventListener('click', function () {
+            setMenu(mobileMenu.classList.contains('hidden'));
+        });
+        mobileMenu.addEventListener('click', function (e) {
+            if (e.target.closest('a')) setMenu(false);       // 點選連結後自動收合
+        });
+        window.matchMedia('(min-width: 768px)').addEventListener('change', function (e) {
+            if (e.matches) setMenu(false);                    // 轉為桌面版時收合
+        });
+
+        /* ---------- 導覽列捲動樣式 ---------- */
+        var navbar = $('navbar');
+        window.addEventListener('scroll', function () {
+            var scrolled = window.scrollY > 50;
+            navbar.classList.toggle('bg-dark-950/95', scrolled);
+            navbar.classList.toggle('shadow-xl', scrolled);
+        }, { passive: true });
+
+        /* ---------- 預訂表單 ---------- */
+        var form = $('booking-form');
+        var checkin = $('checkin-date');
+        var checkout = $('checkout-date');
+        var roomSelect = $('room-type');
+        var formError = $('form-error');
+        var modal = $('success-modal');
+        var modalMsg = $('modal-msg');
+        var lastFocus = null;
+
+        function pad(n) { return n < 10 ? '0' + n : '' + n; }
+        function toISO(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+        function addDays(iso, n) {
+            var p = iso.split('-');
+            var d = new Date(+p[0], +p[1] - 1, +p[2] + n);
+            return toISO(d);
+        }
+
+        // 日期限制：入住不早於今天，退房至少為入住隔天
+        checkin.min = toISO(new Date());
+        checkout.min = addDays(checkin.min, 1);
+        checkin.addEventListener('change', function () {
+            if (!checkin.value) return;
+            var minOut = addDays(checkin.value, 1);
+            checkout.min = minOut;
+            if (checkout.value && checkout.value < minOut) checkout.value = minOut;
+        });
+
+        // 點選客房卡片的「預訂房型」→ 自動帶入房型
+        document.querySelectorAll('.book-room').forEach(function (a) {
+            a.addEventListener('click', function () {
+                roomSelect.value = a.getAttribute('data-room') || '';
+            });
+        });
+
+        function showError(msg) {
+            formError.textContent = msg;
+            formError.classList.remove('hidden');
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            formError.classList.add('hidden');
+
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            if (checkout.value <= checkin.value) {
+                showError('退房日期必須晚於入住日期。');
+                checkout.focus();
+                return;
+            }
+
+            // 使用 textContent 組裝訊息，避免使用者輸入被當成 HTML 執行 (XSS)
+            modalMsg.textContent = '';
+            function hl(text) {
+                var s = document.createElement('span');
+                s.className = 'text-gold-400 font-semibold';
+                s.textContent = text;
+                return s;
+            }
+            modalMsg.append(
+                '尊榮貴賓 ', hl($('guest-name').value.trim()),
+                ' 您好，我們已收到您預訂 ', hl(roomSelect.value),
+                ' 的需求 (' + checkin.value + ' 至 ' + checkout.value + ')。私人管家將盡快與您聯繫！'
+            );
+
+            /* TODO: 在此串接後端 API，例如：
+               fetch('/api/bookings', { method: 'POST', body: new FormData(form) }) */
+
+            openModal();
+            form.reset();
+            checkout.min = addDays(checkin.min, 1);
+        });
+
+        function openModal() {
+            lastFocus = document.activeElement;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            $('modal-close').focus();
+        }
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (lastFocus && lastFocus.focus) lastFocus.focus();
+        }
+        $('modal-close').addEventListener('click', closeModal);
+        modal.addEventListener('click', function (e) { if (e.target === modal) closeModal(); });
+        document.addEventListener('keydown', function (e) {
+            if (e.key !== 'Escape') return;
+            if (!modal.classList.contains('hidden')) closeModal();
+            else if (!mobileMenu.classList.contains('hidden')) setMenu(false);
+        });
+
+        /* ==========================================================
+         * PWA：Toast 提示、安裝、離線、Service Worker 更新
+         * ========================================================== */
+        var toastWrap = $('toast-wrap');
+
+        function showToast(opts) {
+            // opts: { id, text, icon, actions:[{label, primary, onClick}], timeout }
+            if (opts.id) {
+                var old = document.getElementById('toast-' + opts.id);
+                if (old) old.remove();
+            }
+            var el = document.createElement('div');
+            if (opts.id) el.id = 'toast-' + opts.id;
+            el.className = 'toast w-full max-w-md bg-dark-800/95 backdrop-blur-md border border-gold-500/40 rounded-2xl shadow-2xl px-4 py-3 flex items-center gap-3 text-sm text-gray-200';
+
+            var ic = document.createElement('i');
+            ic.className = (opts.icon || 'fa-solid fa-circle-info') + ' text-gold-400 text-lg shrink-0';
+            el.appendChild(ic);
+
+            var txt = document.createElement('span');
+            txt.className = 'flex-1 leading-snug';
+            txt.textContent = opts.text;
+            el.appendChild(txt);
+
+            (opts.actions || []).forEach(function (a) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.textContent = a.label;
+                b.className = a.primary
+                    ? 'shrink-0 px-4 py-2 bg-gold-500 text-dark-950 font-bold text-xs rounded-full hover:bg-gold-400 transition'
+                    : 'shrink-0 px-2 py-2 text-gray-400 text-xs hover:text-white transition';
+                b.addEventListener('click', function () {
+                    el.remove();
+                    if (a.onClick) a.onClick();
+                });
+                el.appendChild(b);
+            });
+
+            toastWrap.appendChild(el);
+            if (opts.timeout) setTimeout(function () { el.remove(); }, opts.timeout);
+            return el;
+        }
+
+        function store(key, val) { try { localStorage.setItem(key, val); } catch (e) {} }
+        function read(key) { try { return localStorage.getItem(key); } catch (e) { return null; } }
+
+        var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+        /* --- 安裝 (Android / Chrome / Edge) --- */
+        var deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', function (e) {
+            e.preventDefault();
+            deferredPrompt = e;
+            if (read('lgp-install-dismissed')) return;
+            setTimeout(function () {
+                if (!deferredPrompt) return;
+                showToast({
+                    id: 'install',
+                    icon: 'fa-solid fa-crown',
+                    text: '將 Le Grand Palais 安裝到主畫面，隨時快速訂房。',
+                    actions: [
+                        { label: '稍後', onClick: function () { store('lgp-install-dismissed', '1'); } },
+                        { label: '安裝', primary: true, onClick: function () {
+                            deferredPrompt.prompt();
+                            deferredPrompt.userChoice.finally(function () { deferredPrompt = null; });
+                        } }
+                    ]
+                });
+            }, 3000);
+        });
+        window.addEventListener('appinstalled', function () {
+            deferredPrompt = null;
+            var t = document.getElementById('toast-install'); if (t) t.remove();
+            showToast({ icon: 'fa-solid fa-circle-check', text: '已成功安裝，可從主畫面開啟！', timeout: 3500 });
+        });
+
+        /* --- 安裝說明 (iOS Safari 沒有 beforeinstallprompt) --- */
+        var ua = navigator.userAgent;
+        var isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        var isSafari = /safari/i.test(ua) && !/crios|fxios|edgios|chrome|android/i.test(ua);
+        if (isIOS && isSafari && !isStandalone && !read('lgp-ios-hint')) {
+            setTimeout(function () {
+                showToast({
+                    id: 'ios',
+                    icon: 'fa-solid fa-arrow-up-from-bracket',
+                    text: '點選 Safari 的「分享」→「加入主畫面」即可安裝此 App。',
+                    actions: [{ label: '知道了', primary: true, onClick: function () { store('lgp-ios-hint', '1'); } }]
+                });
+            }, 4000);
+        }
+
+        /* --- 離線 / 恢復連線 --- */
+        window.addEventListener('offline', function () {
+            showToast({ id: 'net', icon: 'fa-solid fa-wifi', text: '目前處於離線狀態，正在顯示已快取的內容。' });
+        });
+        window.addEventListener('online', function () {
+            showToast({ id: 'net', icon: 'fa-solid fa-circle-check', text: '網路已恢復連線。', timeout: 2500 });
+        });
+        if (!navigator.onLine) window.dispatchEvent(new Event('offline'));
+
+        /* --- Service Worker 註冊與更新流程 --- */
+        if ('serviceWorker' in navigator) {
+            var refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', function () {
+                if (refreshing) return;
+                refreshing = true;
+                window.location.reload();
+            });
+
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('./sw.js').then(function (reg) {
+                    function promptUpdate(worker) {
+                        showToast({
+                            id: 'update',
+                            icon: 'fa-solid fa-rotate',
+                            text: '有新版本可用，更新後將重新載入頁面。',
+                            actions: [
+                                { label: '稍後' },
+                                { label: '立即更新', primary: true, onClick: function () {
+                                    worker.postMessage({ type: 'SKIP_WAITING' });
+                                } }
+                            ]
+                        });
+                    }
+                    if (reg.waiting && navigator.serviceWorker.controller) promptUpdate(reg.waiting);
+                    reg.addEventListener('updatefound', function () {
+                        var nw = reg.installing;
+                        if (!nw) return;
+                        nw.addEventListener('statechange', function () {
+                            if (nw.state === 'installed' && navigator.serviceWorker.controller) promptUpdate(nw);
+                        });
+                    });
+                    // 回到前景時檢查更新
+                    document.addEventListener('visibilitychange', function () {
+                        if (document.visibilityState === 'visible') reg.update().catch(function () {});
+                    });
+                }).catch(function (err) {
+                    console.warn('Service Worker 註冊失敗：', err);
+                });
+            });
+        }
+    })();
+    </script>
+</body>
+</html>
